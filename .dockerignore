@@ -1,0 +1,26 @@
+# Build artifacts
+bin/*.o
+bin/dj_manager
+
+# Output files
+*.txt
+!bin/dj_config.txt
+!input_2/dj_config.txt
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# IDE
+.vscode
+.devcontainer
+.cursor
+
+# OS
+.DS_Store
+
