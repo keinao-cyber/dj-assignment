@@ -41,6 +41,11 @@ public:
     ~Playlist();
 
     /**
+     * Clear all tracks from the playlist
+     */
+    void clear();
+
+    /**
      * Add a track to the playlist
      * @param track Pointer to AudioTrack to add
      */

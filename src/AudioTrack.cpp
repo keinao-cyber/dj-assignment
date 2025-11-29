@@ -28,13 +28,13 @@ AudioTrack::AudioTrack(const std::string& title, const std::vector<std::string>&
     #endif
 }
 
-// ========== TODO: STUDENTS IMPLEMENT RULE OF 5 ==========
+// ========== RULE OF 5 IMPLEMENTATION ==========
 
 AudioTrack::~AudioTrack() {
-    // TODO: Implement the destructor
     #ifdef DEBUG
     std::cout << "AudioTrack destructor called for: " << title << std::endl;
     #endif
+    // delete[] for arrays, not just delete
     delete[] waveform_data;
 }
 
@@ -45,22 +45,28 @@ AudioTrack::AudioTrack(const AudioTrack& other)
       bpm(other.bpm), 
       waveform_size(other.waveform_size)
 {
-    // TODO: Implement the copy constructor
     #ifdef DEBUG
     std::cout << "AudioTrack copy constructor called for: " << other.title << std::endl;
     #endif
+    
+    // deep copy - allocate new memory and copy all the data
     waveform_data = new double[other.waveform_size];
-    std::memcpy(waveform_data, other.waveform_data, other.waveform_size * sizeof(double));
+    for (size_t i = 0; i < waveform_size; i++) {
+        waveform_data[i] = other.waveform_data[i];
+    }
 }
 
 AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
-    // TODO: Implement the copy assignment operator
     #ifdef DEBUG
     std::cout << "AudioTrack copy assignment called for: " << other.title << std::endl;
     #endif
+    
+    // check self-assignment first
     if (this == &other) {
         return *this;
     }
+    
+    // clean up old memory before getting new data
     delete[] waveform_data;
 
     title = other.title;
@@ -69,12 +75,13 @@ AudioTrack& AudioTrack::operator=(const AudioTrack& other) {
     bpm = other.bpm;
     waveform_size = other.waveform_size;
 
+    // deep copy the array
     waveform_data = new double[waveform_size];
-    for (size_t i = 0; i < waveform_size; ++i) {
-        waveform_data[i] = other.waveform_data[i];
+    for (size_t idx = 0; idx < waveform_size; ++idx) {
+        waveform_data[idx] = other.waveform_data[idx];
     }
 
-    return *this;
+    return *this;  // for chaining
 }
 
 AudioTrack::AudioTrack(AudioTrack&& other) noexcept
@@ -89,6 +96,7 @@ AudioTrack::AudioTrack(AudioTrack&& other) noexcept
     std::cout << "AudioTrack move constructor called for: " << other.title << std::endl;
     #endif
     
+    // make source safe to delete by nulling its pointer
     other.waveform_data = nullptr;
     other.waveform_size = 0;
 }
@@ -98,15 +106,14 @@ AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
     std::cout << "AudioTrack move assignment called for: " << other.title << std::endl;
     #endif
     
-    // Check for self-assignment
     if (this == &other) {
         return *this;
     }
     
-    // Clean up existing data
+    // clean up what we have
     delete[] waveform_data;
     
-    // Move all members
+    // steal everything from other
     title = std::move(other.title);
     artists = std::move(other.artists);
     duration_seconds = other.duration_seconds;
@@ -114,7 +121,7 @@ AudioTrack& AudioTrack::operator=(AudioTrack&& other) noexcept {
     waveform_data = other.waveform_data;
     waveform_size = other.waveform_size;
     
-    // Nullify the source to prevent double deletion
+    // make other safe to delete
     other.waveform_data = nullptr;
     other.waveform_size = 0;
     

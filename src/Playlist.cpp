@@ -2,23 +2,30 @@
 #include "AudioTrack.h"
 #include <iostream>
 #include <algorithm>
+
 Playlist::Playlist(const std::string& name) 
     : head(nullptr), playlist_name(name), track_count(0) {
     std::cout << "Created playlist: " << name << std::endl;
 }
-// TODO: Fix memory leaks!
-// Students must fix this in Phase 1
+
+// Playlist owns both the nodes AND the tracks they point to
 Playlist::~Playlist() {
     #ifdef DEBUG
     std::cout << "Destroying playlist: " << playlist_name << std::endl;
     #endif
     
+    clear();
+}
+
+void Playlist::clear() {
     while (head != nullptr) {
         PlaylistNode* temp = head;
         head = head->next;
+        
         delete temp->track;
-        delete temp; 
+        delete temp;
     }
+    track_count = 0;
 }
 
 void Playlist::add_track(AudioTrack* track) {
@@ -27,10 +34,8 @@ void Playlist::add_track(AudioTrack* track) {
         return;
     }
 
-    // Create new node - this allocates memory!
     PlaylistNode* new_node = new PlaylistNode(track);
 
-    // Add to front of list
     new_node->next = head;
     head = new_node;
     track_count++;
@@ -40,28 +45,28 @@ void Playlist::add_track(AudioTrack* track) {
 }
 
 void Playlist::remove_track(const std::string& title) {
-    PlaylistNode* current = head;
+    PlaylistNode* curr = head;
     PlaylistNode* prev = nullptr;
 
-    // Find the track to remove
-    while (current && current->track->get_title() != title) {
-        prev = current;
-        current = current->next;
+    // walk list to find the track
+    while (curr && curr->track->get_title() != title) {
+        prev = curr;
+        curr = curr->next;
     }
 
-    if (current) {
-        // Remove from linked list
+    if (curr) {
         if (prev) {
-            prev->next = current->next;
+            prev->next = curr->next;
         } else {
-            head = current->next;
+            head = curr->next;
         }
 
         track_count--;
         std::cout << "Removed '" << title << "' from playlist" << std::endl;
 
-        delete current->track;
-        delete current;
+        delete curr->track;
+        delete curr;
+        
     } else {
         std::cout << "Track '" << title << "' not found in playlist" << std::endl;
     }
