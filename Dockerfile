@@ -29,3 +29,5 @@ RUN make clean && make
 # Set the default command
 CMD ["./bin/dj_manager"]
 
+
+

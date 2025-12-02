@@ -232,7 +232,6 @@ void DJSession::simulate_dj_performance() {
         }
         
         print_session_summary();
-        stats = SessionStats();  
     }
 }
 
