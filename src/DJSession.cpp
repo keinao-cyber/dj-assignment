@@ -169,19 +169,19 @@ void DJSession::simulate_dj_performance() {
     // loop until all playlists are processed
     while (!all_playlists_processed) {
 
-        std::string playlist_name;
+        std::string playlist_name; //check
 
         // if play_all is true, process all playlists
         if (play_all) {
 
-            // sort playlists alphabetically
+            // sort playlists 
             static std::vector<std::string> sorted_playlists;
             static size_t curr_idx = 0;
 
             // build sorted list 
             if (sorted_playlists.empty()) {
-                for (const auto& p : session_config.playlists) {
-                    sorted_playlists.push_back(p.first);
+                for (const auto& pair : session_config.playlists) {
+                    sorted_playlists.push_back(pair.first);
                 }
                 std::sort(sorted_playlists.begin(), sorted_playlists.end());
             } 
@@ -268,7 +268,7 @@ std::string DJSession::display_playlist_menu_from_config() {
     }
     
     std::cout << "\n=== Available Playlists ===" << std::endl;
-    
+    //check if this is the sorting they want us to use
     // Build sorted list of playlist names
     std::vector<std::string> playlist_names;
     for (const auto& pair : session_config.playlists) {
